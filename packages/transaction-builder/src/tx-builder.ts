@@ -206,40 +206,63 @@ export class TransactionBuilder implements AbstractBuilder {
   /**
    * Adds a NodeStake TxMsg for this transaction
    * @param {string} nodePubKey - Node Public key
+   * @param {string} outputAddress - The address that the coins will be sent to when the node is unstaked
    * @param {string[]} chains - Network identifier list to be serviced by this node
    * @param {string} amount - the amount to stake, must be greater than or equal to 1 POKT
    * @param {URL} serviceURL - Node service url
    * @returns {MsgProtoNodeStakeTx} - The unsigned Node Stake message.
    */
   public nodeStake({
-    nodePubKey,
+    nodePubKey = this.signer.getPublicKey(),
+    outputAddress = this.signer.getAddress(),
     chains,
     amount,
     serviceURL,
   }: {
-    nodePubKey: string
+    nodePubKey?: string
+    outputAddress?: string
     chains: string[]
     amount: string
     serviceURL: URL
   }): MsgProtoNodeStakeTx {
-    return new MsgProtoNodeStakeTx(nodePubKey, chains, amount, serviceURL)
+    return new MsgProtoNodeStakeTx(
+      nodePubKey,
+      outputAddress,
+      chains,
+      amount,
+      serviceURL
+    )
   }
 
   /**
    * Adds a MsgBeginUnstake TxMsg for this transaction
-   * @param {string} address - Address of the Node to unstake for
+   * @param {string} nodeAddress - Address of the Node to unstake for
+   * @param {string} signerAddress - The address that the coins will be sent to when the node is unstaked. Must be the same address entered when the node was staked
    * @returns {MsgProtoNodeUnstake} - The unsigned Node Unstake message.
    */
-  public nodeUnstake(address: string): MsgProtoNodeUnstake {
-    return new MsgProtoNodeUnstake(address)
+  public nodeUnstake({
+    nodeAddress = this.signer.getAddress(),
+    signerAddress = this.signer.getAddress(),
+  }: {
+    nodeAddress?: string
+    signerAddress?: string
+  }): MsgProtoNodeUnstake {
+    return new MsgProtoNodeUnstake(nodeAddress, signerAddress)
   }
 
   /**
    * Adds a MsgUnjail TxMsg for this transaction
-   * @param {string} address - Address of the Node to unjail
+   * @param {string} nodeAddress - Address of the Node to unjail
+   * @param {string} signerAddress - The address of where the coins will be sent to when the node is unstaked (if it is ever). Necessary to unjail the node
    * @returns {MsgProtoNodeUnjail} - The unsigned Node Unjail message.
    */
-  public nodeUnjail(address: string): MsgProtoNodeUnjail {
-    return new MsgProtoNodeUnjail(address)
+  public nodeUnjail({
+    nodeAddress = this.signer.getAddress(),
+    signerAddress = this.signer.getAddress(),
+  }: {
+    nodeAddress?: string
+    signerAddress?: string
+  }): MsgProtoNodeUnjail {
+    return new MsgProtoNodeUnjail(nodeAddress, signerAddress)
   }
 }

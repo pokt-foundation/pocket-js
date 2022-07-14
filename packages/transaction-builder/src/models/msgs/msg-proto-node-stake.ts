@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer'
-import { MsgProtoNodeStake } from './../proto/generated/tx-signer'
+import { MsgProtoNodeStake8 } from './../proto/generated/tx-signer'
 import { Any } from '../proto/generated/google/protobuf/any'
 import { TxMsg } from './tx-msg'
 
@@ -9,11 +9,12 @@ const MINIMUM_STAKE_AMOUNT = 15000000000
  * Model representing a MsgNodeStake to stake as an Node in the Pocket Network
  */
 export class MsgProtoNodeStakeTx extends TxMsg {
-  public readonly KEY: string = '/x.nodes.MsgProtoStake'
-  public readonly AMINO_KEY: string = 'pos/MsgStake'
+  public readonly KEY: string = '/x.nodes.MsgProtoStake8'
+  public readonly AMINO_KEY: string = 'pos/8.0MsgStake'
   public readonly DEFAULT_PORT: string = '443'
   public readonly DEFAULT_PROTOCOL: string = 'https:'
   public readonly pubKey: Buffer
+  public readonly outputAddress: Buffer
   public readonly chains: string[]
   public readonly amount: string
   public readonly serviceURL: URL
@@ -26,12 +27,14 @@ export class MsgProtoNodeStakeTx extends TxMsg {
    */
   constructor(
     pubKey: string,
+    outputAddress: string,
     chains: string[],
     amount: string,
     serviceURL: URL
   ) {
     super()
     this.pubKey = Buffer.from(pubKey, 'hex')
+    this.outputAddress = Buffer.from(outputAddress, 'hex')
     this.chains = chains
     this.amount = amount
     this.serviceURL = serviceURL
@@ -78,6 +81,7 @@ export class MsgProtoNodeStakeTx extends TxMsg {
       type: this.AMINO_KEY,
       value: {
         chains: this.chains,
+        output_address: this.outputAddress.toString('hex'),
         public_key: {
           type: 'crypto/ed25519_public_key',
           value: this.pubKey.toString('hex'),
@@ -99,11 +103,12 @@ export class MsgProtoNodeStakeTx extends TxMsg {
       Chains: this.chains,
       value: this.amount,
       ServiceUrl: this.getParsedServiceURL(),
+      OutAddress: this.outputAddress,
     }
 
     return Any.fromJSON({
       typeUrl: this.KEY,
-      value: Buffer.from(MsgProtoNodeStake.encode(data).finish()).toString(
+      value: Buffer.from(MsgProtoNodeStake8.encode(data).finish()).toString(
         'base64'
       ),
     })

@@ -110,6 +110,7 @@ export abstract class AbstractBuilder {
   /**
    * Adds a NodeStake TxMsg for this transaction
    * @param {string} nodePubKey - Node Public key
+   * @param {string} outputAddress - The address that the coins will be sent to when the node is unstaked
    * @param {string[]} chains - Network identifier list to be serviced by this node
    * @param {string} amount - the amount to stake, must be greater than or equal to 1 POKT
    * @param {URL} serviceURL - Node service url
@@ -117,11 +118,13 @@ export abstract class AbstractBuilder {
    */
   abstract nodeStake({
     nodePubKey,
+    outputAddress,
     chains,
     amount,
     serviceURL,
   }: {
     nodePubKey: string
+    outputAddress: string
     chains: string[]
     amount: string
     serviceURL: URL
@@ -129,15 +132,28 @@ export abstract class AbstractBuilder {
 
   /**
    * Adds a MsgBeginUnstake TxMsg for this transaction
-   * @param {string} address - Address of the Node to unstake for
+   * @param {string} nodeAddress - Address of the Node to unstake for
+   * @param {string} signerAddress - The address that the coins will be sent to when the node is unstaked. Must be the same address entered when the node was staked
    * @returns {MsgProtoNodeUnstake} - The unsigned Node Unstake message.
    */
-  abstract nodeUnstake(address: string): MsgProtoNodeUnstake
+  abstract nodeUnstake({
+    nodeAddress,
+    signerAddress,
+  }: {
+    nodeAddress?: string
+    signerAddress?: string
+  }): MsgProtoNodeUnstake
 
   /**
    * Adds a MsgUnjail TxMsg for this transaction
-   * @param {string} address - Address of the Node to unjail
+   * @param {string} nodeAddress - Address of the Node to unjail
    * @returns {MsgProtoNodeUnjail} - The unsigned Node Unjail message.
    */
-  abstract nodeUnjail(address: string): MsgProtoNodeUnjail
+  abstract nodeUnjail({
+    nodeAddress,
+    signerAddress,
+  }: {
+    nodeAddress?: string
+    signerAddress?: string
+  }): MsgProtoNodeUnjail
 }

@@ -87,10 +87,10 @@ describe('TransactionBuilder Tests', () => {
       })
       expect(nodeStakeMsg instanceof MsgProtoNodeStakeTx).toBe(true)
 
-      const nodeUnstakeMsg = transactionBuilder.nodeUnstake(signer.getAddress())
+      const nodeUnstakeMsg = transactionBuilder.nodeUnstake({})
       expect(nodeUnstakeMsg instanceof MsgProtoNodeUnstake).toBe(true)
 
-      const nodeUnjailMsg = transactionBuilder.nodeUnjail(signer.getAddress())
+      const nodeUnjailMsg = transactionBuilder.nodeUnjail({})
       expect(nodeUnjailMsg instanceof MsgProtoNodeUnjail).toBe(true)
     })
   })
@@ -235,7 +235,7 @@ describe('TransactionBuilder Tests', () => {
       expect(rawTxRequest.address).toBe(signer.getAddress())
     })
     test('Creates a RawTxRequest for MsgProtoNodeUnstake', async () => {
-      const txMsg = transactionBuilder.nodeUnstake(signer.getAddress())
+      const txMsg = transactionBuilder.nodeUnstake({})
 
       const rawTxRequest = await transactionBuilder.createTransaction({ txMsg })
 
@@ -243,7 +243,7 @@ describe('TransactionBuilder Tests', () => {
       expect(rawTxRequest.address).toBe(signer.getAddress())
     })
     test('Creates a RawTxRequest for MsgProtoNodeUnjail', async () => {
-      const txMsg = transactionBuilder.nodeUnjail(signer.getAddress())
+      const txMsg = transactionBuilder.nodeUnjail({})
 
       const rawTxRequest = await transactionBuilder.createTransaction({ txMsg })
 

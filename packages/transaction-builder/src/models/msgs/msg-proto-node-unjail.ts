@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer'
-import { MsgNodeUnjail } from '../proto/generated/tx-signer'
+import { MsgNodeUnjail8 } from '../proto/generated/tx-signer'
 import { Any } from '../proto/generated/google/protobuf/any'
 import { TxMsg } from './tx-msg'
 
@@ -9,14 +9,17 @@ import { TxMsg } from './tx-msg'
 export class MsgProtoNodeUnjail extends TxMsg {
   public readonly KEY: string = '/x.nodes.MsgUnjail'
   public readonly AMINO_KEY: string = 'pos/MsgUnjail'
-  public readonly address: string
+  public readonly nodeAddress: string
+  public readonly signerAddress: string
 
   /**
-   * @param {string} address - Address value
+   * @param {string} nodeAddress - Node address to be unjailed
+   * @param {string} signerAddress - Signer address (who triggered the unjail)
    */
-  public constructor(address: string) {
+  public constructor(nodeAddress: string, signerAddress: string) {
     super()
-    this.address = address
+    this.nodeAddress = nodeAddress
+    this.signerAddress = signerAddress
   }
   /**
    * Converts an Msg Object to StdSignDoc
@@ -27,7 +30,8 @@ export class MsgProtoNodeUnjail extends TxMsg {
     return {
       type: this.AMINO_KEY,
       value: {
-        address: this.address,
+        address: this.nodeAddress,
+        signer_address: this.signerAddress,
       },
     }
   }
@@ -38,11 +42,14 @@ export class MsgProtoNodeUnjail extends TxMsg {
    * @memberof MsgNodeUnjail
    */
   public toStdTxMsgObj(): any {
-    const data = { ValidatorAddr: Buffer.from(this.address, 'hex') }
+    const data = {
+      ValidatorAddr: Buffer.from(this.nodeAddress, 'hex'),
+      Signer: Buffer.from(this.signerAddress, 'hex'),
+    }
 
     return Any.fromJSON({
       typeUrl: this.KEY,
-      value: Buffer.from(MsgNodeUnjail.encode(data).finish()).toString(
+      value: Buffer.from(MsgNodeUnjail8.encode(data).finish()).toString(
         'base64'
       ),
     })
